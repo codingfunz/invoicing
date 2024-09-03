@@ -1,5 +1,5 @@
 <?php
-
+defined('INVOICING') || exit('file is empty');
 date_default_timezone_set(TIMEZONE);
 $lastid 		= __DIR__.'/lastid';
 $invnum 		= file_get_contents($lastid);
