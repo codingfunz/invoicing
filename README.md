@@ -9,6 +9,11 @@ A free stand-alone script to handle invoicing and payment via PayPal smart check
 * Form fields are **not sanitized**. Add security processes as needed
 * If the MailJet SMTP tool will be used, the file named **vendor.zip** must be extracted to enable the dependent libraries. Requires a free account with mailjet.com
 
+### paths
+config - invoicing/?do_config=1
+create invoice - invoicing/?do_invoice=1
+edit an invoice - invoicing/?do_invoice=1&edit=invoice-3504.json
+
 ### Front Invoice View
 ![invoice](https://github.com/user-attachments/assets/51245806-a081-4c7e-b54f-8dba72a94242)
 
