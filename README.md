@@ -5,7 +5,7 @@ A free stand-alone script to handle invoicing and payment via PayPal smart check
 * The UI is not aesthectically dramatic, but can be formatted as desired
 * The form fields has no labels, just placeholder attribute
 * Data is saved as .json files
-* Uses a simple login for administration. Can be developed for greater security if needed. The default password is `admin_config` and is stored in the file named **admin**
+* Uses a simple login for administration. Can be developed for greater security if needed. The default password is `admin_config` and is stored in the file named **admin**. This file can be viewed via a browser so it should be protected. I use .htaccess but each server OS that's not Apache will have its own method to restrict file view.
 * Form fields are **not sanitized**. Add security processes as needed
 * If the MailJet SMTP tool will be used, the file named **vendor.zip** must be extracted to enable the dependent libraries. Requires a free account with mailjet.com
 
