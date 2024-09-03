@@ -7,6 +7,7 @@ use \Mailjet\Resources;
 session_start();
 
 ## SET CONSTANTS ##
+define('INVOICING',		'ready');
 define('INVOICE_DIR',	__DIR__.'/invoice');
 define('TIMEZONE',		get(config()->config_page_timezone));
 define('CONFIG_FILE',		__DIR__.'/_set_configs.json');
