@@ -132,7 +132,9 @@ if( $editmode )
 					<input type="text" name="item_cost" value="<?php echo get(edit()->item_cost); ?>" placeholder="Item Price" />
 					<input type="hidden" name="inv_number" value="<?php echo $invoice_num; ?>" />
 					<input type="date" name="inv_final_date" value="<?php echo get(edit()->inv_final_date); ?>" min="2024-01-01" title="set final date" />
+					<?php if( isset($_GET['edit']) ) { ?>
 					<label>Paid <input type="checkbox" name="item_paid" value="1" <?php checked(get(edit()->item_paid),'1'); ?> /></label>
+					<?php } ?>
 				</div>
 				<div class="flex mb10 flexcol gap10 flexitem-100">
 					<textarea name="item_note" placeholder="Notes on invoice"><?php echo get(edit()->item_note); ?></textarea>
