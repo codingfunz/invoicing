@@ -1,5 +1,5 @@
-# invoicing Script
-A free stand-alone script to handle invoicing and payment via PayPal smart checkout. Requires a free PayPal account and API key. Use this a base to develop whatever is desired.
+# Invoicing Script
+A free stand-alone script to handle invoicing and payment via PayPal smart checkout. Requires a free PayPal account and API key. Use this as a base to develop whatever is desired.
 
 ## It is most basic
 * The UI is not aesthectically dramatic, but can be formatted as desired
