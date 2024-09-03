@@ -1,5 +1,5 @@
 <?php 
-
+defined('INVOICING') || exit('file is empty');
 ## log in
 $logindb = file_get_contents(__DIR__.'/admin');
 $logged_in = false;
