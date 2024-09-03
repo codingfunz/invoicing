@@ -30,9 +30,7 @@ if( isset($_GET['do_invoice']) || isset($_GET['do_configs']) ) {
 		include 'do-invoice.php';
 	if( isset($_GET['do_configs']) )
 		include 'configs.php';
-
-	return;
-}
+}else{
 
 $paypal='';
 if( get(config()->config_paypal_key) ) {
@@ -95,7 +93,7 @@ if( isset(invoice()->paid) && invoice()->paid ) {
 		<?php } ?>
 	</form>
 </div>
-
+<?php } // end do form condition ?>
 <?php echo get(config()->config_page_foot); ?>
 
 </body>
