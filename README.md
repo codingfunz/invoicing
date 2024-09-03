@@ -1,4 +1,4 @@
-# invoicing
+# invoicing Script
 A free stand-alone script to handle invoicing and payment via PayPal smart checkout.
 
 ## It is most basic
@@ -7,6 +7,7 @@ A free stand-alone script to handle invoicing and payment via PayPal smart check
 * Data is saved as .json files
 * Uses a simple login for administration. Can be developed for greater security if needed
 * Form fields are **not sanitized**. Add security processes as needed
+* If the MailJet SMTP tool will be used, the file named **vendor.zip** must be extracted to enable the dependent libraries
 
 ### Front Invoice View
 ![invoice](https://github.com/user-attachments/assets/51245806-a081-4c7e-b54f-8dba72a94242)
