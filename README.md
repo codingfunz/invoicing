@@ -21,6 +21,9 @@ A free stand-alone script to handle invoicing and payment via PayPal smart check
 ### Pay Via PayPal Smart Checkout Without Leaving Page
 ![pay-in-page](https://github.com/user-attachments/assets/2e288783-a637-4ccc-92b4-122b75b5e976)
 
+### If there is no invoice, can serve as a pay resource
+![funding](https://github.com/user-attachments/assets/80da9fc4-4cbb-4263-9b73-518cbac37595)
+
 ### Invoice Creation
 ![create-invoice](https://github.com/user-attachments/assets/3968cf7e-30b6-4226-928c-6ca1f729f4e2)
 
