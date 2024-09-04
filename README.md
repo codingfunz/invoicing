@@ -8,7 +8,7 @@ A free stand-alone script to handle invoicing and payment via PayPal smart check
 * Uses a simple login for administration. Can be developed for greater security if needed. The default password is `admin_config` and is stored in the file named **admin**. This file can be viewed via a browser so it should be protected. I use .htaccess but each server OS that's not Apache will have its own method to restrict file view.
 * Form fields are **not sanitized**. Add security processes as needed
 * If the MailJet SMTP tool will be used, the file named **vendor.zip** must be extracted to enable the dependent libraries. Requires a free account with mailjet.com. There is the standard `mail()` method available, however big bad gmail tends to return if DKIM and SPF does not match their requirements. Mailjet and other SMTP providers will deliver.
-* Function names are very common keywords and may cause conflict if loaded in WordPress or other packages. Either wrap within a class or make the names unique
+* Function names in `functions.php` are very common keywords and may cause conflict if loaded in WordPress or other packages. Either wrap within a class or make the names unique.
 
 ### paths
 * config - invoicing/?do_config=1
