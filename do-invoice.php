@@ -1,5 +1,6 @@
 <?php
 defined('INVOICING') || exit('file is empty');
+
 date_default_timezone_set(TIMEZONE);
 $lastid 		= __DIR__.'/lastid';
 $invnum 		= file_get_contents($lastid);
@@ -20,7 +21,7 @@ if( isset($_POST['_do_invoice']) )
 		$invoice_file = INVOICE_DIR.'/invoice-'.$_POST['inv_number'].'.json';
 	}
 	
-	file_put_contents($invoice_file, json_encode($_POST,JSON_PRETTY_PRINT));
+	file_put_contents($invoice_file, json_encode(sanitize($_POST),JSON_PRETTY_PRINT));
 	redirect(currenturl());
 }
 
