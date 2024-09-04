@@ -11,7 +11,7 @@ A free stand-alone script to handle invoicing and payment via PayPal smart check
 * Function names in `functions.php` are very common keywords and may cause conflict if loaded in WordPress or other packages. Either wrap within a class or make the names unique.
 
 ### paths
-* base url - /invoicing/
+* base url - /invoicing/ (folder name can be changed to whatever is preferred)
 * config - invoicing/?do_config=1
 * create invoice - invoicing/?do_invoice=1
 * edit an invoice - invoicing/?do_invoice=1&edit=invoice-3504.json
