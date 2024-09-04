@@ -2,15 +2,14 @@
 defined('INVOICING') || exit('file is empty');
 
 ## log in
-$logindb = file_get_contents(__DIR__.'/admin');
 $logged_in = false;
 if( isset($_POST['_admin_login']) ) {
-	if( $_POST['_wd_admin_werd'] === $logindb ) {
+	if( $_POST['_wd_admin_werd'] === PWD ) {
 		$_SESSION['wd_admin'] = $_POST['_wd_admin_werd'];
 	}
 	redirect(currenturl());
 }
-if( isset($_SESSION['wd_admin']) && $_SESSION['wd_admin'] === $logindb ) {
+if( isset($_SESSION['wd_admin']) && $_SESSION['wd_admin'] === PWD ) {
 	$logged_in = true;
 }
 
@@ -56,7 +55,7 @@ $mailapp = get(config()->config_email_smtp);
 				<h3>Sandbox</h3>
 				<div class="flex gap10 flex-between flexitem-100">
 					<input type="text" name="config_paypal_sb_key" value="<?php echo get(config()->config_paypal_sb_key); ?>" placeholder="sandbox key" title="paypal sandbox key" />
-					<input type="text" name="config_paypal_sb_ip" value="<?php echo get(config()->config_paypal_sb_ip); ?>" placeholder="ip addresses" title="comma separated ip addresses allowed for sandbox" />
+					<input type="text" name="config_paypal_sb_ip" value="<?php echo get(config()->config_paypal_sb_ip); ?>" placeholder="ip addresses" title="ip addresses" />
 				</div>
 			</div>
 			
