@@ -1,0 +1,27 @@
+{
+    "config_paypal_key": "VXohAq_5TVbUfIYuBdlI-zTtIosTfucqqnQcXwWtqZNJWYf_cF-ECmjExy8Tttg9elbLlf6hTqNqm0Ef",
+    "config_paypal_currency": "USD",
+    "config_paypal_return": "https:\/\/www.facebook.com\/all.the.jamaicans",
+    "config_paypal_sb_key": "AafNJyC4Q4L7gjKIg63QvsGTxSktgnEdKxFB4zZw-8ac6dZ5pNPUSt3iqUkoGgax1BgY3sLAUgpWh5B6",
+    "config_paypal_sb_ip": "177.98.32.196",
+    "config_paypal_funding": {
+        "card": "card"
+    },
+    "config_paypal_btncolor": "blue",
+    "config_paypal_btnshape": "rect",
+    "config_paypal_btnlayout": "vertical",
+    "config_paypal_btnheight": "40",
+    "config_page_title": "Website Service",
+    "config_page_timezone": "America\/New_York",
+    "config_page_head": "<div class=\"head flex flexmid flex-between\">\r\n<div class=\"logo\"><img src=\"https:\/\/thesite.com\/wp-content\/uploads\/wdbrand.svg\" \/><\/div>\r\n<div>813-555-5555<br\/>Tampa, FL<\/div>\r\n<\/div>",
+    "config_page_foot": "",
+    "config_email_from_address": "billing@services.com",
+    "config_email_from_name": "Services.com",
+    "config_email_subject": "Services.com Invoice [INVOICENUMBER]",
+    "config_email_smtp": "php",
+    "config_email_notice_invoice": "Hello [CUSTOMER],\r\n\r\nAn invoice [INVOICENUMBER] has been created for $[TOTAL]. Please view details at [URL]",
+    "config_email_remind_invoice": "Hello [CUSTOMER],\r\n\r\nThis is a friendly reminder for the invoice [INVOICENUMBER] amount of $[TOTAL]. Please see details at [URL]",
+    "config_email_warn_invoice": "Hello [CUSTOMER],\r\n\r\nThis is final notice for invoice [INVOICENUMBER] amount $[TOTAL]. If not paid by [FINALDATE] some shit is gonna go down!",
+    "config_email_signature": "WebsiteDons.com\r\n\r\nOwned and Operated by Services Net Inc\r\nTampa, Florida USA 33609\r\n813-555-5555\r\n\r\nhttps:\/\/services.com\r\nWebsite Design and Development\r\nWebsite Hosting and Client Management",
+    "_write_config": "Save"
+}
