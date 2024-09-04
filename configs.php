@@ -1,5 +1,6 @@
 <?php 
 defined('INVOICING') || exit('file is empty');
+
 ## log in
 $logindb = file_get_contents(__DIR__.'/admin');
 $logged_in = false;
@@ -15,7 +16,7 @@ if( isset($_SESSION['wd_admin']) && $_SESSION['wd_admin'] === $logindb ) {
 
 ## write configs to json file
 if( isset($_POST['_write_config']) ) {
-	$config_save = json_encode($_POST, JSON_PRETTY_PRINT);
+	$config_save = json_encode(sanitize($_POST), JSON_PRETTY_PRINT);
 	file_put_contents(CONFIG_FILE,$config_save);
 	redirect(currenturl());
 }
@@ -38,7 +39,7 @@ $mailapp = get(config()->config_email_smtp);
 <div class="mainwrap">
 	<form action="" method="post">
 		<?php if( !$logged_in ) { ?>
-			<input type="text" name="_wd_admin_werd" value="" />
+			<input type="text" name="_wd_admin_werd" value="" placeholder="password" />
 			<div class="mt10"><input type="submit" name="_admin_login" value="Login" /></div>
 		<?php return; } ?>
 		
