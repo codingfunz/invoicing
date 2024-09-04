@@ -16,7 +16,7 @@ include 'functions.php';
 <meta name="googlebot" content="noindex">
 <meta name="googlebot-news" content="nosnippet">
 <title><?php echo get(config()->config_page_title); ?></title>
-<link href="style.css?v=<?php echo nocache('style.css'); ?>" type="text/css" media="all" rel="stylesheet" />
+<link href="<?php echo ASSET_URL; ?>/style.css?v=<?php echo nocache(ASSET_DIR.'/style.css'); ?>" type="text/css" media="all" rel="stylesheet" />
 </head>
 
 <body <?php echo bodyClass(); ?>>
