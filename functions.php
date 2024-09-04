@@ -465,6 +465,9 @@ function references() {
 	return implode($list);
 }
 
+// this only handles HTML tags
+// for XSS and other sanitization check HTML purifier
+// http://htmlpurifier.org/docs
 function sanitize($post)
 {
 	$keep = '<br><div><img><ul><ol><li><a><p><section><hr><h1><h2><h3><h4><h5><h6><span><strong><table><tr><td><tbody><tfoot><th>';
