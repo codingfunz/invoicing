@@ -44,7 +44,9 @@ $mailapp = get(config()->config_email_smtp);
 		<?php return; } ?>
 		
 		<div class="mb30">
-			<h2>PayPal</h2>
+			<div class="flex gap10 flexmid">
+			<h2>PayPal</h2><span><a href="<?php echo invurl(); ?>?do_invoice=1" class="btn">Invoices</a></span>
+			</div>
 			<div class="flex flexcol gap10 mb10">
 				<div class="flex gap10 flex-between flexitem-100">
 					<input type="text" name="config_paypal_key" value="<?php echo get(config()->config_paypal_key); ?>" placeholder="client key" title="paypal client key" />
