@@ -22,6 +22,6 @@
     "config_email_notice_invoice": "Hello [CUSTOMER],\r\n\r\nAn invoice [INVOICENUMBER] has been created for $[TOTAL]. Please view details at [URL]",
     "config_email_remind_invoice": "Hello [CUSTOMER],\r\n\r\nThis is a friendly reminder for the invoice [INVOICENUMBER] amount of $[TOTAL]. Please see details at [URL]",
     "config_email_warn_invoice": "Hello [CUSTOMER],\r\n\r\nThis is final notice for invoice [INVOICENUMBER] amount $[TOTAL]. If not paid by [FINALDATE] some shit is gonna go down!",
-    "config_email_signature": "WebsiteDons.com\r\n\r\nOwned and Operated by Services Net Inc\r\nTampa, Florida USA 33609\r\n813-555-5555\r\n\r\nhttps:\/\/services.com\r\nWebsite Design and Development\r\nWebsite Hosting and Client Management",
+    "config_email_signature": "Services.com\r\n\r\nOwned and Operated by Services Net Inc\r\nTampa, Florida USA 33609\r\n813-555-5555\r\n\r\nhttps:\/\/services.com\r\nWebsite Design and Development\r\nWebsite Hosting and Client Management",
     "_write_config": "Save"
 }
