@@ -1,8 +1,10 @@
 <?php
 
 // initialize mailjet
+$mj=false;
 if( file_exists(__DIR__.'/vendor/autoload.php') ) {
 	require __DIR__.'/vendor/autoload.php';
+	$mj=true;
 }
 
 use \Mailjet\Resources;
@@ -11,10 +13,19 @@ session_start();
 
 ## SET CONSTANTS ##
 define('INVOICING',		'ready');
-define('INVOICE_DIR',	__DIR__.'/invoice');
+define('DB_DIR',		__DIR__.'/db');
+define('INVOICE_DIR',	DB_DIR.'/invoices');
+define('CONFIG_FILE',	DB_DIR.'/_set_configs.json');
+define('PWD',			file_get_contents(DB_DIR.'/admin'));
+define('CONFIG_DATA',	file_get_contents(CONFIG_FILE));
+define('ASSET_DIR',		__DIR__.'/assets');
+define('ASSET_URL',		invurl().'/assets');
+define('DB_INVNUM',		DB_DIR.'/lastid');
+define('LAST_ID',		file_get_contents(DB_INVNUM));
 define('TIMEZONE',		get(config()->config_page_timezone));
-define('CONFIG_FILE',		__DIR__.'/_set_configs.json');
-define('NL', "\n");
+define('NL', 			"\n");
+
+date_default_timezone_set(TIMEZONE);
 
 // confirm there is an invoice
 $invoice_exist=false;
@@ -78,9 +89,7 @@ function edit()
 
 function config() 
 {
-	$config_file = __DIR__.'/_set_configs.json';
-	$configs = file_get_contents($config_file);
-	$configs = json_decode($configs, true);
+	$configs = json_decode(CONFIG_DATA, true);
 	
 	$ftype = (!empty($configs['config_paypal_funding']) ? $configs['config_paypal_funding'] : '');
 	$ftypes = ['card','paylater','credit','venmo'];
@@ -402,6 +411,9 @@ function sendMail($val)
 //https://github.com/mailjet/mailjet-apiv3-php-no-composer
 function sendMailjet($val)
 {
+	if( !file_exists(__DIR__.'/vendor/autoload.php') )
+		return;
+	
 	$api = get(config()->config_email_mailjet_api);
 	$sk = get(config()->config_email_mailjet_sk);
 	
@@ -468,9 +480,6 @@ function references() {
 	return implode($list);
 }
 
-// this only handles HTML tags
-// for XSS and other sanitization check HTML purifier
-// http://htmlpurifier.org/docs
 function sanitize($post)
 {
 	$keep = '<br><div><img><ul><ol><li><a><p><section><hr><h1><h2><h3><h4><h5><h6><span><strong><table><tr><td><tbody><tfoot><th>';
