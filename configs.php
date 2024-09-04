@@ -56,7 +56,7 @@ $mailapp = get(config()->config_email_smtp);
 				<h3>Sandbox</h3>
 				<div class="flex gap10 flex-between flexitem-100">
 					<input type="text" name="config_paypal_sb_key" value="<?php echo get(config()->config_paypal_sb_key); ?>" placeholder="sandbox key" title="paypal sandbox key" />
-					<input type="text" name="config_paypal_sb_ip" value="<?php echo get(config()->config_paypal_sb_ip); ?>" placeholder="ip addresses" title="ip addresses" />
+					<input type="text" name="config_paypal_sb_ip" value="<?php echo get(config()->config_paypal_sb_ip); ?>" placeholder="ip addresses" title="comma separated ip addresses allowed for sandbox" />
 				</div>
 			</div>
 			
