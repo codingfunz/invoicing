@@ -1,15 +1,11 @@
 <?php
 defined('INVOICING') || exit('file is empty');
 
-date_default_timezone_set(TIMEZONE);
-$lastid 		= __DIR__.'/lastid';
-$invnum 		= file_get_contents($lastid);
-$newinv 		= ((int)$invnum+1);
+$newinv 		= ((int)LAST_ID+1);
 $editmode 		= (isset($_GET['edit']) ? true:false);
 $invoice_num 	= ($editmode ? get(edit()->inv_number):$newinv);
 $inv_date 		= date('Y-m-d');
 $button_label 	= ($editmode ? 'Update':'Create');
-$prefix			= get(edit()->client_name);
 
 // post
 if( isset($_POST['_do_invoice']) ) 
@@ -17,7 +13,7 @@ if( isset($_POST['_do_invoice']) )
 	if( $editmode ) {
 		$invoice_file = INVOICE_DIR.'/'.$_GET['edit'];
 	}else{
-		file_put_contents($lastid,$newinv);
+		file_put_contents(DB_INVNUM,$newinv);
 		$invoice_file = INVOICE_DIR.'/invoice-'.$_POST['inv_number'].'.json';
 	}
 	
@@ -64,6 +60,7 @@ if( $editmode )
 {
 	if( !empty(edit()->client_email) && !get(edit()->item_paid) ) 
 	{
+		// send invoice email
 		if( isset($_POST['_email_this_invoice']) && !is_null($_POST['_email_this_invoice']) ) 
 		{
 			$invoice_notice = get(config()->config_email_notice_invoice);
