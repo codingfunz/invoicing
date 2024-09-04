@@ -12,10 +12,10 @@ A free stand-alone script to handle invoicing and payment via PayPal smart check
 
 ### paths
 * base url - /invoicing/ (folder name can be changed to whatever is preferred)
-* config - invoicing/?do_config=1
-* create invoice - invoicing/?do_invoice=1
-* edit an invoice - invoicing/?do_invoice=1&edit=invoice-3504.json
-* view invoice - invoicing/?client=invoice-3504
+* config - /invoicing/?do_config=1
+* create invoice - /invoicing/?do_invoice=1
+* edit an invoice - /invoicing/?do_invoice=1&edit=invoice-3504.json
+* view invoice - /invoicing/?client=invoice-3504
 
 ### Front Invoice View
 ![invoice](https://github.com/user-attachments/assets/51245806-a081-4c7e-b54f-8dba72a94242)
