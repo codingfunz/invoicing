@@ -21,7 +21,7 @@ mailInvoice();
 		
 		<div class="invoice-form">
 			<?php if( _var()->editmode ) { ?>
-			<h3>Invoice <?php echo get(edit()->inv_number); ?></h3>
+			<h3 class="flex flexmid"><span><?php echo svg()->fileopen; ?></span> <span>Invoice <?php echo get(edit()->inv_number); ?></span></h3>
 			<?php } ?>
 			<form action="" method="post">
 				<div class="flex mb10 gap10 inputs flexitem-100">
