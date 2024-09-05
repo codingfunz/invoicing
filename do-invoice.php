@@ -45,7 +45,7 @@ mailInvoice();
 					<textarea name="item_internal_notes" placeholder="internal notes"><?php echo get(edit()->item_internal_notes); ?></textarea>
 					</div>
 				</div>
-				<input type="hidden" name="inv_date" value="<?php echo get(edit()->inv_date); ?>" />
+				<input type="hidden" name="inv_date" value="<?php echo _var()->setdate; ?>" />
 				<input type="submit" name="_do_invoice" value="<?php echo _var()->button_label; ?> Invoice" />
 				
 				<?php if( _var()->mail_button ) { ?>
