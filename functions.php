@@ -613,6 +613,7 @@ function _var()
 	
 	$v->invoices	= filelist(INVOICE_DIR,'.json');
 	$v->mail_button = (!empty(edit()->client_email) && !get(edit()->item_paid) ? true:false);
+	$v->setdate	= (!empty(edit()->inv_date) ? edit()->inv_date : date('Y-m-d'));
 	
 	return $v;
 }
