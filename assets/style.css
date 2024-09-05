@@ -211,9 +211,20 @@ ul, ul li{
 	margin-top: 2px;
 }
 .invoice-list div > span {
-	background: #ddd;
+	background: #cff49f;
 	padding: 4px 8px;
 	border-radius: 3px;
+}
+.invoice-list div > span:nth-child(2) {
+	background: #a9e4f9;
+}
+.invoice-list button {
+	background: #ffc175;
+	border: 0;
+	border-radius: 3px;
+}
+.invoice-list button:nth-child(2) {
+	background: #ff7c7c;
 }
 
 /*front*/
