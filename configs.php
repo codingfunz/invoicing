@@ -1,46 +1,24 @@
 <?php 
 defined('INVOICING') || exit('file is empty');
 
-## log in
-$logged_in = false;
-if( isset($_POST['_admin_login']) ) {
-	if( $_POST['_wd_admin_werd'] === PWD ) {
-		$_SESSION['wd_admin'] = $_POST['_wd_admin_werd'];
-	}
-	redirect(currenturl());
-}
-if( isset($_SESSION['wd_admin']) && $_SESSION['wd_admin'] === PWD ) {
-	$logged_in = true;
-}
-
 ## write configs to json file
-if( isset($_POST['_write_config']) ) {
-	$config_save = json_encode(sanitize($_POST), JSON_PRETTY_PRINT);
-	file_put_contents(CONFIG_FILE,$config_save);
-	redirect(currenturl());
-}
+configSave();
 
-// funding methods
+// paypal funding methods
 $ftype = get(config()->config_paypal_funding);
-$card = (!empty($ftype->card) ? ' checked' : '');
-$paylater = (!empty($ftype->later) ? ' checked' : '');
-$venmo = (!empty($ftype->venmo) ? ' checked' : '');
-$credit = (!empty($ftype->credit) ? ' checked' : '');
-// button styles
-$btnlayout = config()->config_paypal_btnlayout;
-$btnshape = config()->config_paypal_btnshape;
-$btncolor = config()->config_paypal_btncolor;
-$btnheight = config()->config_paypal_btnheight;
+// paypal button style
+$ppbtn = get(config()->config_paypal_btn);
 //email
 $mailapp = get(config()->config_email_smtp);
 ?>
 
 <div class="mainwrap">
 	<form action="" method="post">
-		<?php if( !$logged_in ) { ?>
+		<?php if( !adminLogin() ) { ?>
 			<input type="text" name="_wd_admin_werd" value="" placeholder="password" />
 			<div class="mt10"><input type="submit" name="_admin_login" value="Login" /></div>
-		<?php return; } ?>
+			
+		<?php }else{ ?>
 		
 		<div class="mb30">
 			<div class="flex gap10 flexmid">
@@ -48,8 +26,8 @@ $mailapp = get(config()->config_email_smtp);
 			</div>
 			<div class="flex flexcol gap10 mb10">
 				<div class="flex gap10 flex-between flexitem-100">
-					<input type="text" name="config_paypal_key" value="<?php echo get(config()->config_paypal_key); ?>" placeholder="client key" title="paypal client key" />
-					<input type="text" name="config_paypal_currency" value="<?php echo strtoupper(get(config()->config_paypal_currency)); ?>" placeholder="currency code" style="width: 130px;" />
+					<input type="text" name="config_paypal_key" value="<?php echo get(config()->config_paypal_key); ?>" placeholder="client key" title="paypal client key" required />
+					<input type="text" name="config_paypal_currency" value="<?php echo strtoupper(get(config()->config_paypal_currency)); ?>" placeholder="currency code" style="width: 130px;" required />
 					<input type="text" name="config_paypal_return" value="<?php echo get(config()->config_paypal_return); ?>" placeholder="return URL" title="return URL" />
 				</div>
 				<h3>Sandbox</h3>
@@ -62,35 +40,35 @@ $mailapp = get(config()->config_email_smtp);
 			<div class="flex gap10 check-group">
 				<div>
 					<h3>Pay methods</h3>
-					<label>card<input type="checkbox" name="config_paypal_funding[card]" value="card" <?php echo $card; ?> /></label>
-					<label>pay later<input type="checkbox" name="config_paypal_funding[later]" value="paylater" <?php echo $paylater; ?>/></label>
-					<label>venmo<input type="checkbox" name="config_paypal_funding[venmo]" value="venmo" <?php echo $venmo; ?>/></label>
-					<label>credit<input type="checkbox" name="config_paypal_funding[credit]" value="credit" <?php echo $credit; ?>/></label>
+					<label>card<input type="checkbox" name="config_paypal_funding[card]" value="card" <?php checked(get($ftype->card),'card'); ?> /></label>
+					<label>pay later<input type="checkbox" name="config_paypal_funding[later]" value="paylater" <?php checked(get($ftype->later),'paylater'); ?>/></label>
+					<label>venmo<input type="checkbox" name="config_paypal_funding[venmo]" value="venmo" <?php checked(get($ftype->venmo),'venmo'); ?>/></label>
+					<label>credit<input type="checkbox" name="config_paypal_funding[credit]" value="credit" <?php checked(get($ftype->credit),'credit'); ?>/></label>
 				</div>
 				<div>
 					<h3>Button Color</h3>
-					<label>blue<input type="radio" name="config_paypal_btncolor" value="blue" <?php checked($btncolor,'blue'); ?> /></label>
-					<label>gold<input type="radio" name="config_paypal_btncolor" value="gold" <?php checked($btncolor,'gold'); ?> /></label>
+					<label>blue<input type="radio" name="config_paypal_btn[color]" value="blue" <?php checked($ppbtn->color,'blue'); ?> /></label>
+					<label>gold<input type="radio" name="config_paypal_btn[color]" value="gold" <?php checked($ppbtn->color,'gold'); ?> /></label>
 				</div>
 				<div>
 					<h3>Button Shape</h3>
-					<label>pill<input type="radio" name="config_paypal_btnshape" value="pill" <?php checked($btnshape,'pill'); ?> /></label>
-					<label>rectangle<input type="radio" name="config_paypal_btnshape" value="rect" <?php checked($btnshape,'rect'); ?> /></label>
+					<label>pill<input type="radio" name="config_paypal_btn[shape]" value="pill" <?php checked($ppbtn->shape,'pill'); ?> /></label>
+					<label>rectangle<input type="radio" name="config_paypal_btn[shape]" value="rect" <?php checked($ppbtn->shape,'rect'); ?> /></label>
 				</div>
 				<div>
 					<h3>Button Layout</h3>
-					<label>vertical<input type="radio" name="config_paypal_btnlayout" value="vertical" <?php checked($btnlayout,'vertical'); ?> /></label>
-					<label>horizontal<input type="radio" name="config_paypal_btnlayout" value="horizontal" <?php checked($btnlayout,'horizontal'); ?> /></label>
+					<label>vertical<input type="radio" name="config_paypal_btn[layout]" value="vertical" <?php checked($ppbtn->layout,'vertical'); ?> /></label>
+					<label>horizontal<input type="radio" name="config_paypal_btn[layout]" value="horizontal" <?php checked($ppbtn->layout,'horizontal'); ?> /></label>
 				</div>
 				<div>
 					<h3>Button Height</h3>
-					<select name="config_paypal_btnheight">
-						<option value="30"<?php selected($btnheight,'30'); ?>>30</option>
-						<option value="35"<?php selected($btnheight,'35'); ?>>35</option>
-						<option value="40"<?php selected($btnheight,'40'); ?>>40</option>
-						<option value="45"<?php selected($btnheight,'45'); ?>>45</option>
-						<option value="50"<?php selected($btnheight,'50'); ?>>50</option>
-						<option value="55"<?php selected($btnheight,'55'); ?>>55</option>
+					<select name="config_paypal_btn[height]">
+						<option value="30"<?php selected($ppbtn->height,'30'); ?>>30</option>
+						<option value="35"<?php selected($ppbtn->height,'35'); ?>>35</option>
+						<option value="40"<?php selected($ppbtn->height,'40'); ?>>40</option>
+						<option value="45"<?php selected($ppbtn->height,'45'); ?>>45</option>
+						<option value="50"<?php selected($ppbtn->height,'50'); ?>>50</option>
+						<option value="55"<?php selected($ppbtn->height,'55'); ?>>55</option>
 					</select>
 				</div>
 			</div>
@@ -98,19 +76,21 @@ $mailapp = get(config()->config_email_smtp);
 		
 		<div class="mb10">
 			<h2>Page Stuff</h2>
-			<div class="flex flexmid gap10 flex-even">
+			<div class="flex flexmid gap10 flex-even mb10">
 				<input type="text" name="config_page_title" value="<?php echo get(config()->config_page_title); ?>" placeholder="page title" />
 				<input type="text" name="config_page_timezone" value="<?php echo get(config()->config_page_timezone); ?>" placeholder="set timezone" />
+				<input type="text" name="config_page_cache_dir" value="<?php echo get(config()->config_page_cache_dir); ?>" placeholder="invoices cache URL" required />
+			</div>
+			<div class="flex flexmid gap10 flex-even">
 				<textarea name="config_page_head" placeholder="page head"><?php echo get(config()->config_page_head); ?></textarea>
 				<textarea name="config_page_foot" placeholder="page foot"><?php echo get(config()->config_page_foot); ?></textarea>
-				
 			</div>
 		</div>
 		
 		<div class="mb10">
 			<h2>Email</h2>
 			<div class="flex flexmid gap10 flex-even">
-				<input type="text" name="config_email_from_address" value="<?php echo get(config()->config_email_from_address); ?>" placeholder="sending email" title="sending email" />
+				<input type="text" name="config_email_from_address" value="<?php echo get(config()->config_email_from_address); ?>" placeholder="sending email" title="sending email" required />
 				<input type="text" name="config_email_from_name" value="<?php echo get(config()->config_email_from_name); ?>" placeholder="sending name" title="sending name" />
 				<input type="text" name="config_email_subject" value="<?php echo get(config()->config_email_subject); ?>" placeholder="subject" title="subject" />
 				<div class="flex gap10 check-group">
@@ -126,10 +106,10 @@ $mailapp = get(config()->config_email_smtp);
 			
 			<?php if( config()->config_email_smtp == 'mailjet' ) { ?>
 			<div class="flex gap10 mb10">
-				<input type="text" name="config_email_mailjet_api" value="<?php echo get(config()->config_email_mailjet_api); ?>" placeholder="mailjet api" title="mailjet api" />
-				<input type="text" name="config_email_mailjet_sk" value="<?php echo get(config()->config_email_mailjet_sk); ?>" placeholder="mailjet secret" title="subject" />
-				<input type="text" name="config_email_mailjet_user" value="<?php echo get(config()->config_email_mailjet_user); ?>" placeholder="mailjet user" title="subject" />
-				<input type="text" name="config_email_mailjet_pwd" value="<?php echo get(config()->config_email_mailjet_pwd); ?>" placeholder="mailjet password" title="subject" />
+				<input type="text" name="config_email_mailjet_api" value="<?php echo get(config()->config_email_mailjet_api); ?>" placeholder="mailjet api" title="mailjet api" required />
+				<input type="text" name="config_email_mailjet_sk" value="<?php echo get(config()->config_email_mailjet_sk); ?>" placeholder="mailjet secret" title="mailjet secret key" required />
+				<input type="text" name="config_email_mailjet_user" value="<?php echo get(config()->config_email_mailjet_user); ?>" placeholder="mailjet user" title="mailjet user (optional)" />
+				<input type="text" name="config_email_mailjet_pwd" value="<?php echo get(config()->config_email_mailjet_pwd); ?>" placeholder="mailjet password" title="mailjet password (optional)" />
 			</div>
 			<?php } ?>
 			
@@ -157,6 +137,7 @@ $mailapp = get(config()->config_email_smtp);
 		</div>
 		
 		<div class="mt10"><input type="submit" name="_write_config" value="Save" /></div>
+		<?php } // end logged in condition ?>
 	</form>
 	<div>
 	<h3>Resources Documentation</h3>
