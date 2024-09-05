@@ -226,6 +226,12 @@ ul, ul li{
 .invoice-list button:nth-child(2) {
 	background: #ff7c7c;
 }
+.invoice-list button:nth-child(1) svg {
+	fill: #d35b00;
+}
+.invoice-list button:nth-child(2) svg {
+	fill: #a80000;
+}
 
 /*front*/
 .invoice-detail {
