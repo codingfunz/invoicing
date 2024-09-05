@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // initialize mailjet
 $mj=false;
@@ -8,8 +9,6 @@ if( file_exists(__DIR__.'/vendor/autoload.php') ) {
 }
 
 use \Mailjet\Resources;
-
-session_start();
 
 ## SET CONSTANTS ##
 define('INVOICING',		'ready');
@@ -75,7 +74,7 @@ function invoice()
 
 function edit()
 {
-	if( isset($_GET['do_invoice']) && isset($_GET['edit']) ) 
+	if( isset($_GET['do_invoice']) && isset($_GET['edit']) && file_exists(INVOICE_DIR.'/'.$_GET['edit']) ) 
 	{
 		$v = file_get_contents(INVOICE_DIR.'/'.$_GET['edit']);
 		$v = json_decode($v);
@@ -516,15 +515,19 @@ function strip_tags_content($text, $tags = '', $invert = FALSE)
 
 function writepage($inv_number)
 {
+	$setopt = invurl().'/?client=invoice-'.$inv_number;
+	$html_cache_path = htmlCache().'/invoice-'.$inv_number.'.html';
+	if( is_string($inv_number) && 'index' === $inv_number ) {
+		$setopt = invurl();
+		$html_cache_path = htmlCache().'/index.html';
+	}
 	$curl = curl_init(); 
-	curl_setopt($curl, CURLOPT_URL, invurl().'/?client=invoice-'.$inv_number); 
+	curl_setopt($curl, CURLOPT_URL, $setopt); 
 	curl_setopt($curl, CURLOPT_BINARYTRANSFER, true); 
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
 
 	$html_string = curl_exec($curl); 
 	curl_close($curl);
-	
-	$html_cache_path = htmlCache().'/invoice-'.$inv_number.'.html';
 	
 	file_put_contents($html_cache_path,$html_string);
 }
@@ -560,11 +563,16 @@ function configSave()
 	if( isset($_POST['_write_config']) ) 
 	{
 		$config_save = json_encode(sanitize($_POST), JSON_PRETTY_PRINT);
+		
+		file_put_contents(CONFIG_FILE,$config_save);
+		
 		// create invoices html cache directory
 		if( !file_exists(htmlCache()) )
 			mkdir(htmlCache());
 		
-		file_put_contents(CONFIG_FILE,$config_save);
+		// create index.html with default funding page
+		if( !file_exists(htmlCache().'/index.html') )
+			writepage('index');
 		
 		redirect(currenturl());
 	}
@@ -599,7 +607,7 @@ function _var()
 	$v = new stdClass();
 	$v->newinv 		= ((int)LAST_ID+1);
 	$v->editmode 	= $editmode;
-	$v->invoice_num = ($editmode ? get(edit()->inv_number):$v->newinv);
+	$v->invoice_num = ($editmode ? get(edit()->inv_number):((int)LAST_ID+1));
 	$v->inv_date 	= date('Y-m-d');
 	$v->button_label = ($editmode ? 'Update':'Create');
 	
@@ -664,7 +672,9 @@ function invoiceNav()
 	{
 		$data = file_get_contents(INVOICE_DIR.'/'.$inv);
 		$data = json_decode($data);
-		$invoice_url = htmlCache('uri').'/'.str_replace('.json','',$inv).'.html';
+		$filename = str_replace('.json','',$inv);
+		$invoice_url = htmlCache('uri').'/'.$filename.'.html';
+		
 		$invoice_list[] = '
 		<div class="flex gap5">
 			<span>
@@ -676,17 +686,29 @@ function invoiceNav()
 			</span>
 			<span><a href="'.$invoice_url.'" target="_blank" title="view invoice">View</a></span>
 			<form method="post" action="">
-				<button name="del_'.$data->inv_number.'" title="move to trash">X</button>
+				<span class="flex gap5">
+				<button name="trash_'.$data->inv_number.'" title="move to trash"><img src="'.ASSET_URL.'/trash-fill.svg" /></button>
+				<button name="del_'.$data->inv_number.'" title="delete"><img src="'.ASSET_URL.'/x-circle-fill.svg" /></button>
+				</span>
 			</form>
 		</div>';
+		
 		// move an invoice to trash folder
-		if( isset($_POST['del_'.$data->inv_number]) ) 
+		if( isset($_POST['trash_'.$data->inv_number]) || isset($_POST['del_'.$data->inv_number]) ) 
 		{
 			$oldfile = INVOICE_DIR.'/invoice-'.$data->inv_number.'.json';
 			$trash = INVOICE_DIR.'/trash/invoice-'.$data->inv_number.'.json';
-			rename($oldfile,$trash);
-			// uncomment following method if total delete is preferred
-			//unlink($oldfile);
+			$cached_file = htmlCache().'/'.$filename.'.html';
+			// deleted cached html file
+			if( file_exists($cached_file) )
+				unlink($cached_file);
+			
+			if( isset($_POST['trash_'.$data->inv_number]) ) {
+				rename($oldfile,$trash);
+			}else
+			if( isset($_POST['del_'.$data->inv_number]) ) {
+				unlink($oldfile);
+			}
 			redirect(invurl().'?do_invoice=1');
 		}
 	}
