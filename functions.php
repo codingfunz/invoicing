@@ -19,7 +19,7 @@ define('CONFIG_FILE',	DB_DIR.'/_set_configs.json');
 define('PWD',			file_get_contents(DB_DIR.'/admin'));
 define('CONFIG_DATA',	file_get_contents(CONFIG_FILE));
 define('ASSET_DIR',		__DIR__.'/assets');
-define('ASSET_URL',		invurl().'/assets');
+define('ASSET_URL',		invurl().'assets');
 define('DB_INVNUM',		DB_DIR.'/lastid');
 define('LAST_ID',		file_get_contents(DB_INVNUM));
 define('TIMEZONE',		get(config()->config_page_timezone));
@@ -36,7 +36,6 @@ if( isset($_GET['client']) && file_exists(INVOICE_DIR.'/'.$_GET['client'].'.json
 $complete=false;
 if( isset($_GET['payment_status']) && $_GET['payment_status'] == 'Completed' )
 	$complete=true;
-
 
 function invoice() 
 {
@@ -164,6 +163,8 @@ function smartCheckout($params=[])
 	
 	$success_form = '';
 	
+	$btn = get(config()->config_paypal_btn);
+	
 	$html = '
 	<div id="smart-button-container">
 		<div class="pp-buttons">
@@ -194,11 +195,11 @@ function smartCheckout($params=[])
 	{
 		paypal.Buttons({
 			style: {
-			shape: "'.config()->config_paypal_btnshape.'",
-			color: "'.config()->config_paypal_btncolor.'",
-			layout: "'.config()->config_paypal_btnlayout.'",
+			shape: "'.$btn->shape.'",
+			color: "'.$btn->color.'",
+			layout: "'.$btn->layout.'",
 			label: "checkout",
-			height: '.config()->config_paypal_btnheight.',
+			height: '.$btn->height.',
 			tagline: false
 			},
 
@@ -368,7 +369,7 @@ function makeObj($data) {
 }
 
 function checked($val,$compare) {
-	if( $val === $compare )
+	if( get($val) === $compare )
 		echo ' checked';
 	return;
 }
@@ -511,4 +512,184 @@ function strip_tags_content($text, $tags = '', $invert = FALSE)
 	}
 
 	return $text;
+}
+
+function writepage($inv_number)
+{
+	$curl = curl_init(); 
+	curl_setopt($curl, CURLOPT_URL, invurl().'/?client=invoice-'.$inv_number); 
+	curl_setopt($curl, CURLOPT_BINARYTRANSFER, true); 
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
+
+	$html_string = curl_exec($curl); 
+	curl_close($curl);
+	
+	$html_cache_path = htmlCache().'/invoice-'.$inv_number.'.html';
+	
+	file_put_contents($html_cache_path,$html_string);
+}
+
+function htmlCache($type='path')
+{
+	$html_cache_url = parse_url(get(config()->config_page_cache_dir));
+	$path = $_SERVER['DOCUMENT_ROOT'].get($html_cache_url['path']);
+	if( $type == 'uri' )
+		$path = get(config()->config_page_cache_dir);
+	
+	return $path;
+}
+
+function adminLogin()
+{
+	$logged_in = false;
+	if( isset($_POST['_admin_login']) ) {
+		if( $_POST['_wd_admin_werd'] === PWD ) {
+			$_SESSION['wd_admin'] = $_POST['_wd_admin_werd'];
+		}
+		redirect(currenturl());
+	}
+	if( isset($_SESSION['wd_admin']) && $_SESSION['wd_admin'] === PWD ) {
+		$logged_in = true;
+	}
+	
+	return $logged_in;
+}
+
+function configSave()
+{
+	if( isset($_POST['_write_config']) ) 
+	{
+		$config_save = json_encode(sanitize($_POST), JSON_PRETTY_PRINT);
+		// create invoices html cache directory
+		if( !file_exists(htmlCache()) )
+			mkdir(htmlCache());
+		
+		file_put_contents(CONFIG_FILE,$config_save);
+		
+		redirect(currenturl());
+	}
+	return;
+}
+
+function invoiceSave()
+{
+	if( isset($_POST['_do_invoice']) ) 
+	{
+		if( _var()->editmode ) {
+			$invoice_file = INVOICE_DIR.'/'.$_GET['edit'];
+			$redirect_url = currenturl();
+			$inv_number = get(edit()->inv_number);
+		}else{
+			file_put_contents(DB_INVNUM,_var()->newinv);
+			$invoice_file = INVOICE_DIR.'/invoice-'.$_POST['inv_number'].'.json';
+			$redirect_url = currenturl().'&edit=invoice-'.$_POST['inv_number'].'.json';
+			$inv_number = $_POST['inv_number'];
+		}
+		
+		file_put_contents($invoice_file, json_encode(sanitize($_POST),JSON_PRETTY_PRINT));
+		writepage($inv_number);
+		redirect($redirect_url);
+	}
+	return;
+}
+
+function _var()
+{
+	$editmode = (isset($_GET['edit']) ? true:false);
+	$v = new stdClass();
+	$v->newinv 		= ((int)LAST_ID+1);
+	$v->editmode 	= $editmode;
+	$v->invoice_num = ($editmode ? get(edit()->inv_number):$v->newinv);
+	$v->inv_date 	= date('Y-m-d');
+	$v->button_label = ($editmode ? 'Update':'Create');
+	
+	$v->invoices	= filelist(INVOICE_DIR,'.json');
+	$v->mail_button = (!empty(edit()->client_email) && !get(edit()->item_paid) ? true:false);
+	
+	return $v;
+}
+
+function mailInvoice()
+{
+	if( _var()->editmode ) 
+	{
+		if( !empty(edit()->client_email) && !get(edit()->item_paid) ) 
+		{
+			// send invoice email
+			if( isset($_POST['_email_this_invoice']) && !is_null($_POST['_email_this_invoice']) ) 
+			{
+				$invoice_notice = get(config()->config_email_notice_invoice);
+				if( isset($_POST['_notice_type']) ) {
+					$pt = $_POST['_notice_type'];
+					if( $pt == 'remind' )
+						$invoice_notice = get(config()->config_email_remind_invoice);
+					if( $pt == 'warn' )
+						$invoice_notice = get(config()->config_email_warn_invoice);
+				}
+				$invoice_notice .= NL.NL.'--'.NL.get(config()->config_email_signature);
+				
+				$sc = ['[CUSTOMER]','[TOTAL]','[URL]','[FINALDATE]','[INVOICENUMBER]',PHP_EOL];
+				$data = [
+				ucwords(get(edit()->client_name)),
+				number_format(get(edit()->item_cost),2,'.',''), 
+				htmlCache('uri').'/'.str_replace('.json','',$_GET['edit']).'.html',
+				date('F d, Y',strtotime(get(edit()->inv_final_date))),
+				'#'.get(edit()->inv_number),
+				NL
+				];
+				
+				$message = str_replace($sc,$data,$invoice_notice);
+				
+				$val = [
+				'subject' => str_replace('[INVOICENUMBER]',' #'.get(edit()->inv_number),get(config()->config_email_subject)),
+				'message' => $message
+				];
+				
+				if( config()->config_email_smtp == 'mailjet' ) {
+					sendMailjet($val);
+				}else{
+					sendMail($val);
+				}
+				redirect(currenturl());
+			}
+		}
+	}
+	return;
+}
+
+function invoiceNav()
+{
+	$invoice_list=[];
+	foreach(_var()->invoices as $inv) 
+	{
+		$data = file_get_contents(INVOICE_DIR.'/'.$inv);
+		$data = json_decode($data);
+		$invoice_url = htmlCache('uri').'/'.str_replace('.json','',$inv).'.html';
+		$invoice_list[] = '
+		<div class="flex gap5">
+			<span>
+				<a href="'.$_SERVER['SCRIPT_URI'].'?do_invoice=1&edit='.$inv.'" class="flex gap5 flex-between width-200" title="edit invoice">
+					<span>'.ucwords($data->client_name).'</span>
+					<span>'.$data->inv_number.'</span>
+					<span>$'.number_format($data->item_cost, 2, '.', '').'</span>
+				</a>
+			</span>
+			<span><a href="'.$invoice_url.'" target="_blank" title="view invoice">View</a></span>
+			<form method="post" action="">
+				<button name="del_'.$data->inv_number.'" title="move to trash">X</button>
+			</form>
+		</div>';
+		// move an invoice to trash folder
+		if( isset($_POST['del_'.$data->inv_number]) ) 
+		{
+			$oldfile = INVOICE_DIR.'/invoice-'.$data->inv_number.'.json';
+			$trash = INVOICE_DIR.'/trash/invoice-'.$data->inv_number.'.json';
+			rename($oldfile,$trash);
+			// uncomment following method if total delete is preferred
+			//unlink($oldfile);
+			redirect(invurl().'?do_invoice=1');
+		}
+	}
+	
+	return implode($invoice_list);
 }
