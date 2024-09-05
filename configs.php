@@ -79,7 +79,7 @@ $mailapp = get(config()->config_email_smtp);
 			<div class="flex flexmid gap10 flex-even mb10">
 				<input type="text" name="config_page_title" value="<?php echo get(config()->config_page_title); ?>" placeholder="page title" />
 				<input type="text" name="config_page_timezone" value="<?php echo get(config()->config_page_timezone); ?>" placeholder="set timezone" />
-				<input type="text" name="config_page_cache_dir" value="<?php echo get(config()->config_page_cache_dir); ?>" placeholder="invoices cache URL" required />
+				<input type="text" name="config_page_cache_dir" value="<?php echo get(config()->config_page_cache_dir); ?>" placeholder="invoices HTML pages cache URL" required />
 			</div>
 			<div class="flex flexmid gap10 flex-even">
 				<textarea name="config_page_head" placeholder="page head"><?php echo get(config()->config_page_head); ?></textarea>
